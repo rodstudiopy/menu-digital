@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head><title><%= empresa.nombre %> - Detalle</title><link rel="stylesheet" href="/css/style.css"></head>
+<body>
+  <div class="container">
+    <a href="/admin">← Volver al listado</a>
+    <h1 style="margin-top:12px;"><%= empresa.nombre %></h1>
+
+    <div style="display:flex; gap:10px; margin: 15px 0;">
+      <% if(empresa.tipo_menu === 'escrito') { %>
+        <a href="/admin/empresas/<%= empresa.id %>/menu" style="flex:1;"><button>Gestionar Menú</button></a>
+      <% } %>
+      <a href="/menu/<%= empresa.slug %>" target="_blank" style="flex:1;"><button class="btn-sec">Abrir Menú Público (QR)</button></a>
+    </div>
+
+    <div style="background:#f1f5f9; padding:12px; border-radius:6px; margin-bottom:15px;">
+      <strong>Enlace permanente para QR:</strong><br>
+      <code>http://<%= host %>/menu/<%= empresa.slug %></code>
+    </div>
+
+    <h3>Estadísticas de Visitas</h3>
+    <p>Total históricas: <strong><%= totalVisitas %></strong> | Últimos 7 días: <strong><%= visitasSemana %></strong></p>
+
+    <hr>
+    <h3>Estado y Configuración</h3>
+    <form action="/admin/empresas/<%= empresa.id %>/toggle" method="POST" style="margin-bottom:15px;">
+      <button type="submit" class="<%= empresa.activo ? 'btn-danger' : '' %>">
+        <%= empresa.activo ? "Pausar Menú (Desactivar temporalmente)" : "Activar Menú" %>
+      </button>
+    </form>
+
+    <form action="/admin/empresas/<%= empresa.id %>/editar" method="POST" enctype="multipart/form-data">
+      <label>Nombre:</label>
+      <input type="text" name="nombre" value="<%= empresa.nombre %>" required>
+      <label>Dirección:</label>
+      <input type="text" name="direccion" value="<%= empresa.direccion %>">
+      <label>Teléfono:</label>
+      <input type="text" name="telefono" value="<%= empresa.telefono %>">
+      <label>Logo URL:</label>
+      <input type="url" name="logo_url" value="<%= empresa.logo_url %>">
+      <label>Color temático:</label>
+      <input type="color" name="tema_color" value="<%= empresa.tema_color %>">
+      <label>Idiomas activos:</label>
+      <input type="text" name="idiomas" value="<%= empresa.idiomas %>">
+
+      <div style="background:#eff6ff; padding:12px; border-radius:8px; margin-bottom:12px;">
+        <label style="font-weight:bold;">Tipo de Menú:</label>
+        <select name="tipo_menu" id="tipo_menu" onchange="toggleTipoMenu()">
+          <option value="escrito" <%= empresa.tipo_menu === 'escrito' ? 'selected' : '' %>>Menú Escrito (categorías y productos)</option>
+          <option value="imagen" <%= empresa.tipo_menu === 'imagen' ? 'selected' : '' %>>Menú en Imagen (subir foto JPG/PNG)</option>
+        </select>
+
+        <div id="campo_imagen" style="margin-top:10px;">
+          <% if(empresa.menu_imagen_url) { %>
+            <p style="font-size:12px;">Imagen actual:</p>
+            <img src="<%= empresa.menu_imagen_url %>" style="max-width:200px; border-radius:8px; margin-bottom:8px;">
+          <% } %>
+          <label style="font-size:12px;">Subir nueva imagen (JPG o PNG):</label>
+          <input type="file" name="menu_imagen" accept="image/png, image/jpeg">
+        </div>
+      </div>
+
+      <button type="submit">Guardar Cambios</button>
+    </form>
+  </div>
+
+  <script>
+    function toggleTipoMenu() {
+      const tipo = document.getElementById('tipo_menu').value;
+      document.getElementById('campo_imagen').style.display = tipo === 'imagen' ? 'block' : 'none';
+    }
+    toggleTipoMenu();
+  </script>
+</body>
+</html>

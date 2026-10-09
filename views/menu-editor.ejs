@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head><title>Editor de Menú - <%= empresa.nombre %></title><link rel="stylesheet" href="/css/style.css"></head>
+<body>
+  <div class="container">
+    <a href="/admin/empresas/<%= empresa.id %>">← Volver al local</a>
+    <h1 style="margin-top:10px;">Editor de Menú: <%= empresa.nombre %></h1>
+
+    <div style="background:#f1f5f9; padding:12px; border-radius:8px; margin-bottom:20px;">
+      <h3>+ Agregar Categoría</h3>
+      <form action="/admin/empresas/<%= empresa.id %>/categorias" method="POST" style="display:flex; gap:10px;">
+        <input type="text" name="nombre" placeholder="Nombre (Español)" required>
+        <input type="text" name="nombre_en" placeholder="Nombre (Inglés)">
+        <button style="width:200px;" type="submit">Agregar</button>
+      </form>
+    </div>
+
+    <% categorias.forEach(c => { %>
+      <div style="border:1px solid #cbd5e1; border-radius:8px; padding:16px; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2><%= c.nombre %> <small style="font-size:14px; color:#64748b;">(<%= c.nombre_en || 'sin EN' %>)</small></h2>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn-sec" style="width:auto; padding:4px 10px; font-size:12px;" onclick="toggleEditCat(<%= c.id %>)">Editar</button>
+            <form action="/admin/categorias/<%= c.id %>/eliminar" method="POST" onsubmit="return confirm('¿Borrar categoría y sus productos?')">
+              <button class="btn-danger" style="width:auto; padding:4px 10px; font-size:12px;">Eliminar</button>
+            </form>
+          </div>
+        </div>
+
+        <div id="edit-cat-<%= c.id %>" style="display:none; background:#f8fafc; padding:10px; border-radius:6px; margin-top:10px;">
+          <form action="/admin/categorias/<%= c.id %>/editar" method="POST" style="display:flex; gap:10px;">
+            <input type="text" name="nombre" value="<%= c.nombre %>" placeholder="Nombre (Español)" required>
+            <input type="text" name="nombre_en" value="<%= c.nombre_en || '' %>" placeholder="Nombre (Inglés)">
+            <button style="width:160px;" type="submit">Guardar</button>
+          </form>
+        </div>
+
+        <div style="margin: 12px 0;">
+          <% productos.filter(p => p.categoria_id === c.id).forEach(p => { %>
+            <div style="background:#f8fafc; padding:8px 12px; margin-bottom:6px; border-radius:4px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <strong><%= p.nombre %></strong> — Gs. <%= formatGs(p.precio) %>
+                  <p style="font-size:12px; color:#64748b;"><%= p.descripcion %></p>
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button type="button" class="btn-sec" style="width:auto; padding:4px 8px; font-size:12px;" onclick="toggleEditProd(<%= p.id %>)">Editar</button>
+                  <form action="/admin/productos/<%= p.id %>/eliminar" method="POST">
+                    <button class="btn-danger" style="width:auto; padding:4px 8px; font-size:12px;">X</button>
+                  </form>
+                </div>
+              </div>
+
+              <div id="edit-prod-<%= p.id %>" style="display:none; margin-top:10px; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
+                <form action="/admin/productos/<%= p.id %>/editar" method="POST">
+                  <input type="text" name="nombre" value="<%= p.nombre %>" placeholder="Nombre plato (ES)" required>
+                  <input type="text" name="nombre_en" value="<%= p.nombre_en || '' %>" placeholder="Nombre plato (EN)">
+                  <textarea name="descripcion" placeholder="Descripción (ES)"><%= p.descripcion || '' %></textarea>
+                  <textarea name="descripcion_en" placeholder="Descripción (EN)"><%= p.descripcion_en || '' %></textarea>
+                  <input type="number" step="1" name="precio" value="<%= p.precio %>" placeholder="Precio (Gs)" required>
+                  <input type="url" name="imagen_url" value="<%= p.imagen_url || '' %>" placeholder="URL Imagen (opcional)">
+                  <button type="submit">Guardar Cambios</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <details>
+          <summary style="cursor:pointer; color:#2563eb; font-weight:500;">+ Agregar plato/producto a <%= c.nombre %></summary>
+          <form action="/admin/categorias/<%= c.id %>/productos" method="POST" style="margin-top:10px;">
+            <input type="text" name="nombre" placeholder="Nombre plato (ES)" required>
+            <input type="text" name="nombre_en" placeholder="Nombre plato (EN)">
+            <textarea name="descripcion" placeholder="Descripción (ES)"></textarea>
+            <textarea name="descripcion_en" placeholder="Descripción (EN)"></textarea>
+            <input type="number" step="1" name="precio" placeholder="Precio (Gs)" required>
+            <input type="url" name="imagen_url" placeholder="URL Imagen (opcional)">
+            <button type="submit">Guardar Plato</button>
+          </form>
+        </details>
+      </div>
+    <% }) %>
+  </div>
+
+  <script>
+    function toggleEditCat(id) {
+      const el = document.getElementById('edit-cat-' + id);
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+    function toggleEditProd(id) {
+      const el = document.getElementById('edit-prod-' + id);
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

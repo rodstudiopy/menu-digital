@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Login</title><link rel="stylesheet" href="/css/style.css"></head>
+<body>
+  <div class="container" style="max-width: 400px; margin-top: 60px;">
+    <h2>Acceso Panel Admin</h2>
+    <% if(error) { %><p style="color:red;"><%= error %></p><% } %>
+    <form action="/login" method="POST">
+      <input type="text" name="usuario" placeholder="Usuario" required>
+      <input type="password" name="clave" placeholder="Contraseña" required>
+      <button type="submit">Ingresar</button>
+    </form>
+  </div>
+</body>
+</html>

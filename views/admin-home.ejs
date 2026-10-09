@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head><title>Panel Administrador</title><link rel="stylesheet" href="/css/style.css"></head>
+<body>
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h1>Empresas y Locales</h1>
+      <a href="/logout" style="color:#dc2626;">Cerrar sesión</a>
+    </div>
+
+    <div class="grid-cards">
+      <% empresas.forEach(e => { %>
+        <a class="card" href="/admin/empresas/<%= e.id %>">
+          <h3><%= e.nombre %></h3>
+          <p style="font-size:12px; color:#64748b;">/menu/<%= e.slug %></p>
+          <span class="badge <%= e.activo ? 'badge-act' : 'badge-ina' %>">
+            <%= e.activo ? 'Activo' : 'Pausado' %>
+          </span>
+        </a>
+      <% }) %>
+    </div>
+
+    <hr>
+    <h2>Registrar Nueva Empresa</h2>
+    <form action="/admin/empresas" method="POST" enctype="multipart/form-data" style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <input type="text" name="nombre" placeholder="Nombre de empresa" required>
+      <input type="text" name="slug" placeholder="enlace-fijo (ej: mi-cafe)" required>
+      <input type="text" name="direccion" placeholder="Dirección">
+      <input type="text" name="telefono" placeholder="Teléfono">
+      <input type="url" name="logo_url" placeholder="URL Logo (opcional)">
+      <div>
+        <label style="font-size:12px;">Color temático:</label>
+        <input type="color" name="tema_color" value="#2563eb">
+      </div>
+      <div>
+        <label style="font-size:12px;">Idiomas (separados por coma):</label>
+        <input type="text" name="idiomas" value="es,en">
+      </div>
+
+      <div style="grid-column: span 2; background:#eff6ff; padding:12px; border-radius:8px;">
+        <label style="font-weight:bold;">Tipo de Menú:</label>
+        <select name="tipo_menu" id="tipo_menu" onchange="toggleTipoMenu()">
+          <option value="escrito">Menú Escrito (categorías y productos)</option>
+          <option value="imagen">Menú en Imagen (subir foto JPG/PNG)</option>
+        </select>
+
+        <div id="campo_imagen" style="display:none; margin-top:10px;">
+          <label style="font-size:12px;">Imagen del menú (JPG o PNG):</label>
+          <input type="file" name="menu_imagen" accept="image/png, image/jpeg">
+        </div>
+      </div>
+
+      <button style="grid-column: span 2;" type="submit">Crear Empresa</button>
+    </form>
+  </div>
+
+  <script>
+    function toggleTipoMenu() {
+      const tipo = document.getElementById('tipo_menu').value;
+      document.getElementById('campo_imagen').style.display = tipo === 'imagen' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html style="--tema: <%= empresa.tema_color %>;">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= empresa.nombre %> - Menú Digital</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body style="background:#f1f5f9; padding: 10px;">
+  <div class="menu-publico">
+    <div class="menu-header">
+      <% if(empresa.logo_url) { %><img src="<%= empresa.logo_url %>" alt="Logo"><% } %>
+      <h1><%= empresa.nombre %></h1>
+      <% if(empresa.direccion) { %><p style="font-size:13px; opacity:0.9;"><%= empresa.direccion %></p><% } %>
+    </div>
+
+    <% if(empresa.tipo_menu === 'imagen') { %>
+
+      <% if(empresa.menu_imagen_url) { %>
+        <img src="<%= empresa.menu_imagen_url %>" alt="Menú" style="width:100%; display:block;">
+      <% } else { %>
+        <p style="text-align:center; padding:30px; color:#64748b;">El menú aún no ha sido cargado.</p>
+      <% } %>
+
+    <% } else { %>
+
+      <% if(idiomasDisponibles.length > 1) { %>
+        <div class="selector-idioma">
+          <% idiomasDisponibles.forEach(i => { %>
+            <a href="?lang=<%= i %>" class="<%= i === lang ? 'activo' : '' %>"><%= i.toUpperCase() %></a>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <div style="padding: 16px;">
+        <% categorias.forEach(c => { %>
+          <h2 style="color: var(--tema); margin-top:16px; border-bottom: 2px solid var(--tema); padding-bottom:4px;">
+            <%= t(c, 'nombre') %>
+          </h2>
+
+          <% productos.filter(p => p.categoria_id === c.id).forEach(p => { %>
+            <div class="prod-item">
+              <% if(p.imagen_url) { %><img src="<%= p.imagen_url %>" alt="<%= t(p, 'nombre') %>"><% } %>
+              <div class="prod-info">
+                <h4><%= t(p, 'nombre') %></h4>
+                <% if(t(p, 'descripcion')) { %>
+                  <p style="font-size:13px; color:#64748b; margin-top:2px;"><%= t(p, 'descripcion') %></p>
+                <% } %>
+              </div>
+              <div class="prod-precio">Gs. <%= formatGs(p.precio) %></div>
+            </div>
+          <% }) %>
+        <% }) %>
+      </div>
+
+    <% } %>
+  </div>
+</body>
+</html>
