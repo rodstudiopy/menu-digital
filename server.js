@@ -4,6 +4,8 @@ const session = require("express-session");
 const path = require("path");
 
 const app = express();
+const menuRoutes = require("./routes/menu");
+app.use("/api/menu", menuRoutes);
 
 // Función para formatear números con separador de miles (estilo guaraní)
 app.locals.formatGs = function (num) {

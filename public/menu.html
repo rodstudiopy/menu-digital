@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Nuestro Menú</title>
+<style>
+  body { font-family: sans-serif; text-align: center; }
+  #menu { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 20px; }
+  #menu img { max-width: 90%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+</style>
+</head>
+<body>
+  <h1>Menú</h1>
+  <div id="menu"></div>
+  <script>
+    fetch("/api/menu/images")
+      .then((r) => r.json())
+      .then((imagenes) => {
+        const cont = document.getElementById("menu");
+        imagenes.forEach((img) => {
+          const el = document.createElement("img");
+          el.src = img.url;
+          cont.appendChild(el);
+        });
+      });
+  </script>
+</body>
+</html>
